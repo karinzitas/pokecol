@@ -1,722 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#E24B4A">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="PokéColeção">
-  <title>PokéColeção</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#E24B4A">
 
-    .tab-bar {
-      display: flex;
-      border-bottom: 1px solid #e0e0e0;
-      background: white;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .tab {
-      flex: 1; padding: 12px 4px; font-size: 11px; text-align: center;
-      cursor: pointer; color: #888; border: none; background: none;
-      border-bottom: 2px solid transparent;
-    }
-    .tab.active { color: #E24B4A; border-bottom: 2px solid #E24B4A; font-weight: 600; }
-    .tab i { display: block; font-size: 20px; margin-bottom: 2px; }
+<title>PokéColeção</title>
 
-    .section { padding: 12px; }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
-    .search-bar { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
-    .search-bar input,
-    .search-bar select {
-      height: 38px; border-radius: 10px; border: 1px solid #ddd;
-      padding: 0 12px; font-size: 14px; background: white; color: #1a1a1a;
-    }
-    .search-bar input { flex: 1; }
-    .search-bar select { max-width: 140px; }
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .sets-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .set-card {
-      background: white; border: 1px solid #eee; border-radius: 14px;
-      padding: 10px; cursor: pointer; transition: box-shadow 0.15s;
-    }
-    .set-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .set-card img { width: 100%; height: 42px; object-fit: contain; margin-bottom: 6px; }
-    .set-card .set-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
-    .set-card .set-info { font-size: 10px; color: #888; }
-    .set-card .set-progress { margin-top: 6px; height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden; }
-    .set-card .set-progress-fill { height: 100%; background: #E24B4A; border-radius: 2px; transition: width 0.3s; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f5f5f5;
+}
 
-    .cards-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .back-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 22px; padding: 0; }
-    .cards-header h2 { font-size: 15px; font-weight: 600; flex: 1; }
-    .cards-stats { font-size: 12px; color: #888; }
+/* Tabs */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  position: sticky;
+  top: 0;
+}
 
-    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .card-item {
-      position: relative; cursor: pointer; border-radius: 8px;
-      overflow: hidden; border: 2px solid transparent; transition: border-color 0.15s;
-    }
-    .card-item.owned { border-color: #1D9E75; }
-    .card-item img { width: 100%; display: block; border-radius: 6px; }
-    .card-item .card-num { font-size: 9px; color: #888; text-align: center; padding: 2px 0; }
-    .card-check {
-      position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
-      border-radius: 50%; background: #1D9E75; display: none;
-      align-items: center; justify-content: center;
-    }
-    .card-item.owned .card-check { display: flex; }
-    .card-check i { font-size: 12px; color: white; }
+.tab {
+  flex: 1;
+  padding: 12px;
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  color: #888;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+}
 
-    .filter-row {
-      display: flex; gap: 6px; margin-bottom: 10px;
-      overflow-x: auto; padding-bottom: 4px;
-    }
-    .filter-chip {
-      padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd;
-      background: white; font-size: 11px; cursor: pointer; color: #666;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .filter-chip.active { background: #E24B4A; color: white; border-color: #E24B4A; }
+.tab.active {
+  color: #E24B4A;
+  border-bottom: 2px solid #E24B4A;
+}
 
-    .stats-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
-    .stat-card { background: white; border-radius: 12px; padding: 14px; text-align: center; }
-    .stat-card .val { font-size: 24px; font-weight: 700; color: #1a1a1a; }
-    .stat-card .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+/* Section */
+.section { padding: 12px; }
 
-    .binder-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 4px; background: #2C2C2A; padding: 10px;
-      border-radius: 14px; min-height: 200px;
-    }
-    .binder-slot {
-      aspect-ratio: 2/3; border-radius: 6px;
-      background: rgba(255,255,255,0.08);
-      border: 1px dashed rgba(255,255,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; position: relative; overflow: hidden;
-    }
-    .binder-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
-    .binder-slot .slot-hint { font-size: 20px; color: rgba(255,255,255,0.2); }
-    .binder-slot .slot-remove {
-      position: absolute; top: 3px; right: 3px; width: 18px; height: 18px;
-      background: rgba(226,75,74,0.9); border-radius: 50%;
-      display: none; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .binder-slot:hover .slot-remove { display: flex; }
-    .binder-slot .slot-remove i { font-size: 10px; color: white; }
+/* Search */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
 
-    .binder-size-btn {
-      padding: 7px 14px; border-radius: 10px; border: 1px solid #ddd;
-      background: white; font-size: 13px; cursor: pointer; color: #444;
-      margin-right: 6px;
-    }
-    .binder-size-btn.active { background: #E24B4A; color: white; border-color: #E24B4A; }
+.search-bar input {
+  flex: 1;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 0 12px;
+}
 
-    .loading { text-align: center; padding: 40px 20px; color: #aaa; font-size: 13px; }
-    .loading i { font-size: 30px; display: block; margin-bottom: 8px; opacity: 0.4; }
-    .empty { text-align: center; padding: 30px 20px; color: #aaa; font-size: 13px; }
-    .empty i { font-size: 34px; display: block; margin-bottom: 8px; opacity: 0.4; }
+/* FILTER CHIPS */
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
 
-    .section-title {
-      font-size: 12px; font-weight: 600; color: #999; margin-bottom: 10px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
+.chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
-    /* Modal de seleção de carta para o binder */
-    .pick-modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-      z-index: 100; display: none; flex-direction: column;
-    }
-    .pick-modal.open { display: flex; }
-    .pick-modal-inner {
-      background: white; margin: auto 0 0;
-      border-radius: 20px 20px 0 0; padding: 16px;
-      max-height: 75vh; overflow-y: auto;
-    }
-    .pick-modal-header {
-      display: flex; justify-content: space-between;
-      align-items: center; margin-bottom: 12px;
-    }
-    .pick-modal-header h3 { font-size: 16px; font-weight: 600; }
-    .pick-modal-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .pick-card { cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid transparent; }
-    .pick-card:hover { border-color: #E24B4A; }
-    .pick-card img { width: 100%; display: block; }
-    .pick-card .pick-name { font-size: 9px; color: #888; text-align: center; padding: 2px; }
+.chip.active {
+  background: #E24B4A;
+  color: white;
+  border-color: #E24B4A;
+}
 
-    .close-btn {
-      background: none; border: none; cursor: pointer;
-      color: #aaa; font-size: 22px; padding: 0;
-    }
+/* Sets grid */
+.sets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
 
-    /* Toast de confirmação */
-    .toast {
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      background: #1D9E75; color: white; padding: 8px 18px;
-      border-radius: 20px; font-size: 13px; font-weight: 500;
-      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
-    }
-    .toast.show { opacity: 1; }
-  </style>
+.set-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.set-name {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.card-item {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.card-item.owned {
+  border-color: #1D9E75;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1D9E75;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  opacity: 0;
+}
+
+.toast.show { opacity: 1; }
+
+</style>
 </head>
+
 <body>
 
-<div id="app-wrap">
-  <div id="app">
-    <div class="tab-bar">
-      <button class="tab active" onclick="showTab('sets')" id="tab-sets">
-        <i class="ti ti-layers"></i>Sets
-      </button>
-      <button class="tab" onclick="showTab('collection')" id="tab-collection">
-        <i class="ti ti-cards"></i>Coleção
-      </button>
-      <button class="tab" onclick="showTab('binder')" id="tab-binder">
-        <i class="ti ti-book"></i>Binder
-      </button>
-      <button class="tab" onclick="showTab('stats')" id="tab-stats">
-        <i class="ti ti-chart-pie"></i>Stats
-      </button>
-    </div>
+<div id="app">
 
-    <!-- ABA: SETS -->
-    <div id="view-sets" class="section">
-      <div class="search-bar">
-        <input type="text" id="set-search" placeholder="Buscar set..." oninput="filterSets()">
-        <select id="set-series" onchange="filterSets()">
-          <option value="">Todas as séries</option>
-        </select>
-      </div>
-      <div class="sets-grid" id="sets-grid">
-        <div class="loading" style="grid-column:1/-1">
-          <i class="ti ti-pokeball"></i>Carregando sets...
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA: CARTAS DO SET (aparece ao clicar em um set) -->
-    <div id="view-cards" class="section" style="display:none">
-      <div class="cards-header">
-        <button class="back-btn" onclick="backToSets()">
-          <i class="ti ti-arrow-left"></i>
-        </button>
-        <h2 id="set-title">Set</h2>
-        <span class="cards-stats" id="cards-stats"></span>
-      </div>
-      <div class="filter-row" id="rarity-filters"></div>
-      <div class="cards-grid" id="cards-grid"></div>
-    </div>
-
-    <!-- ABA: COLEÇÃO -->
-    <div id="view-collection" class="section" style="display:none">
-      <p class="section-title">Cartas que tenho</p>
-      <div class="search-bar">
-        <input type="text" id="col-search" placeholder="Buscar carta..." oninput="filterCollection()">
-      </div>
-      <div class="cards-grid" id="collection-grid">
-        <div class="empty" style="grid-column:1/-1">
-          <i class="ti ti-pokeball"></i>Nenhuma carta marcada ainda
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA: BINDER -->
-    <div id="view-binder" class="section" style="display:none">
-      <p class="section-title">Simular binder</p>
-      <div style="margin-bottom:10px;">
-        <button class="binder-size-btn active" onclick="setBinSize(9,this)">3×3</button>
-        <button class="binder-size-btn" onclick="setBinSize(12,this)">3×4</button>
-        <button class="binder-size-btn" onclick="setBinSize(18,this)">3×6</button>
-      </div>
-      <div class="binder-grid" id="binder-grid"></div>
-      <p style="font-size:11px;color:#aaa;margin-top:8px;text-align:center;">
-        Toque em um slot para adicionar uma carta
-      </p>
-    </div>
-
-    <!-- ABA: STATS -->
-    <div id="view-stats" class="section" style="display:none">
-      <p class="section-title">Minha coleção</p>
-      <div class="stats-cards">
-        <div class="stat-card"><div class="val" id="stat-owned">0</div><div class="lbl">Tenho</div></div>
-        <div class="stat-card"><div class="val" id="stat-sets">0</div><div class="lbl">Sets vistos</div></div>
-        <div class="stat-card"><div class="val" id="stat-pct">0%</div><div class="lbl">Completado</div></div>
-        <div class="stat-card"><div class="val" id="stat-missing">0</div><div class="lbl">Faltando</div></div>
-      </div>
-      <p class="section-title">Progresso por set</p>
-      <div id="progress-list"></div>
-    </div>
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('sets')">Sets</button>
+    <button class="tab" onclick="showTab('collection')">Coleção</button>
+    <button class="tab" onclick="showTab('binder')">Binder</button>
+    <button class="tab" onclick="showTab('stats')">Stats</button>
   </div>
 
-  <!-- MODAL: escolher carta para o binder -->
-  <div class="pick-modal" id="pick-modal">
-    <div style="flex:1" onclick="closePick()"></div>
-    <div class="pick-modal-inner">
-      <div class="pick-modal-header">
-        <h3>Escolher carta</h3>
-        <button class="close-btn" onclick="closePick()"><i class="ti ti-x"></i></button>
-      </div>
-      <div class="search-bar" style="margin-bottom:10px;">
-        <input type="text" id="pick-search" placeholder="Buscar..." oninput="filterPick()">
-        <select id="pick-set-filter" onchange="onPickSetChange()">
-          <option value="">Minhas cartas</option>
-        </select>
-      </div>
-      <div class="pick-modal-cards" id="pick-modal-cards"></div>
+  <!-- SETS VIEW -->
+  <div id="view-sets" class="section">
+
+    <div class="search-bar">
+      <input type="text" id="set-search" placeholder="Buscar..." oninput="filterSets()">
     </div>
+
+    <!-- NEW FILTER CHIPS -->
+    <div class="chips" id="chips"></div>
+
+    <div class="sets-grid" id="sets-grid"></div>
   </div>
+
+  <!-- CARDS -->
+  <div id="view-cards" style="display:none">
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+
+  <div id="view-collection" style="display:none"></div>
+  <div id="view-binder" style="display:none"></div>
+  <div id="view-stats" style="display:none"></div>
+
 </div>
 
-<!-- Toast de confirmação -->
 <div class="toast" id="toast"></div>
 
 <script>
-  // ─── CONFIGURAÇÃO ────────────────────────────────────────────────────────────
-  const API = 'https://api.pokemontcg.io/v2';
+const API = 'https://api.pokemontcg.io/v2';
 
-  // ─── ESTADO ──────────────────────────────────────────────────────────────────
-  let allSets = [], filteredSets = [], currentSet = null, currentCards = [];
-  let owned = JSON.parse(localStorage.getItem('pkm_owned') || '{}');
-  let binder = JSON.parse(localStorage.getItem('pkm_binder') || '[]');
-  let binderSize = 9;
-  let activeSlot = -1;
-  let allOwnedCards = [];
-  let setsCache = {};
-  let pickCards = [], filteredPickCards = [];
+let allSets = [];
+let filteredSets = [];
+let activeSeries = null;
 
-  // ─── PERSISTÊNCIA ────────────────────────────────────────────────────────────
-  function saveOwned() { localStorage.setItem('pkm_owned', JSON.stringify(owned)); }
-  function saveBinder() { localStorage.setItem('pkm_binder', JSON.stringify(binder)); }
+let owned = JSON.parse(localStorage.getItem('pkm_owned') || '{}');
 
-  // ─── TOAST ───────────────────────────────────────────────────────────────────
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 1800);
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* LOAD SETS */
+async function loadSets() {
+  const r = await fetch(`${API}/sets`);
+  const d = await r.json();
+
+  allSets = d.data;
+  filteredSets = allSets;
+
+  buildChips();
+  renderSets();
+}
+
+/* BUILD CHIPS */
+function buildChips() {
+  const container = document.getElementById('chips');
+
+  const seriesList = [...new Set(allSets.map(s => s.series))];
+
+  container.innerHTML = `
+    <div class="chip ${!activeSeries ? 'active' : ''}" onclick="selectSeries(null, this)">Todos</div>
+    ${seriesList.map(s => `
+      <div class="chip" onclick="selectSeries('${s}', this)">${s}</div>
+    `).join('')}
+  `;
+}
+
+/* SELECT CHIP */
+function selectSeries(series, el) {
+  activeSeries = series;
+
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  filterSets();
+}
+
+/* FILTER */
+function filterSets() {
+  const q = document.getElementById('set-search').value.toLowerCase();
+
+  filteredSets = allSets.filter(s => {
+    const matchSearch = s.name.toLowerCase().includes(q);
+    const matchSeries = !activeSeries || s.series === activeSeries;
+    return matchSearch && matchSeries;
+  });
+
+  renderSets();
+}
+
+/* RENDER SETS */
+function renderSets() {
+  const g = document.getElementById('sets-grid');
+
+  g.innerHTML = filteredSets.map(s => `
+    <div class="set-card" onclick="openSet('${s.id}')">
+      <div class="set-name">${s.name}</div>
+    </div>
+  `).join('');
+}
+
+/* OPEN SET */
+async function openSet(setId) {
+  document.getElementById('view-sets').style.display = 'none';
+  document.getElementById('view-cards').style.display = 'block';
+
+  const r = await fetch(`${API}/cards?q=set.id:${setId}`);
+  const d = await r.json();
+
+  renderCards(d.data);
+}
+
+/* RENDER CARDS */
+function renderCards(cards) {
+  const g = document.getElementById('cards-grid');
+
+  g.innerHTML = cards.map(c => {
+    const key = c.id;
+    const isOwned = !!owned[key];
+
+    return `
+      <div class="card-item ${isOwned ? 'owned' : ''}"
+           onclick="toggleOwned('${key}', this)">
+        <img src="${c.images.small}">
+      </div>
+    `;
+  }).join('');
+}
+
+/* TOGGLE */
+function toggleOwned(key, el) {
+  if (owned[key]) {
+    delete owned[key];
+    el.classList.remove('owned');
+    showToast('Removido');
+  } else {
+    owned[key] = true;
+    el.classList.add('owned');
+    showToast('Adicionado');
   }
 
-  // ─── CARREGAMENTO DE SETS ────────────────────────────────────────────────────
-  async function loadSets() {
-    try {
-      const r = await fetch(`${API}/sets?orderBy=-releaseDate&pageSize=250`);
-      const d = await r.json();
-      allSets = d.data || [];
+  localStorage.setItem('pkm_owned', JSON.stringify(owned));
+}
 
-      // Popula o filtro de séries
-      const series = [...new Set(allSets.map(s => s.series))].filter(Boolean);
-      const sel = document.getElementById('set-series');
-      series.forEach(s => {
-        const o = document.createElement('option');
-        o.value = s; o.textContent = s;
-        sel.appendChild(o);
-      });
+/* TABS */
+function showTab(tab) {
+  ['sets','collection','binder','stats'].forEach(t => {
+    document.getElementById('view-' + t).style.display = 'none';
+  });
 
-      filteredSets = allSets;
-      renderSets();
-    } catch (e) {
-      document.getElementById('sets-grid').innerHTML =
-        '<div class="loading" style="grid-column:1/-1"><i class="ti ti-wifi-off"></i>Erro ao carregar. Verifique sua conexão.</div>';
-    }
-  }
+  document.getElementById('view-' + tab).style.display = 'block';
+}
 
-  function filterSets() {
-    const q = document.getElementById('set-search').value.toLowerCase();
-    const ser = document.getElementById('set-series').value;
-    filteredSets = allSets.filter(s => {
-      return (!q || s.name.toLowerCase().includes(q)) && (!ser || s.series === ser);
-    });
-    renderSets();
-  }
+/* INIT */
+loadSets();
 
-  function renderSets() {
-    const g = document.getElementById('sets-grid');
-    if (!filteredSets.length) {
-      g.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="ti ti-search"></i>Nenhum set encontrado</div>';
-      return;
-    }
-    g.innerHTML = filteredSets.map(s => {
-      const total = s.total || s.printedTotal || 0;
-      const cnt = Object.keys(owned).filter(k => k.startsWith(s.id + '_')).length;
-      const pct = total ? Math.round(cnt / total * 100) : 0;
-      return `<div class="set-card" onclick="openSet('${s.id}')">
-        ${s.images?.logo ? `<img src="${s.images.logo}" alt="${s.name}" loading="lazy">` : ''}
-        <div class="set-name">${s.name}</div>
-        <div class="set-info">${s.series} · ${cnt}/${total}</div>
-        <div class="set-progress">
-          <div class="set-progress-fill" style="width:${pct}%"></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // ─── CARTAS DO SET ───────────────────────────────────────────────────────────
-  async function openSet(setId) {
-    document.getElementById('view-sets').style.display = 'none';
-    document.getElementById('view-cards').style.display = 'block';
-
-    const set = allSets.find(s => s.id === setId);
-    currentSet = set;
-    document.getElementById('set-title').textContent = set?.name || setId;
-    document.getElementById('cards-grid').innerHTML =
-      '<div class="loading" style="grid-column:1/-1"><i class="ti ti-pokeball"></i>Carregando cartas...</div>';
-    document.getElementById('rarity-filters').innerHTML = '';
-
-    try {
-      if (!setsCache[setId]) {
-        const r = await fetch(`${API}/cards?q=set.id:${setId}&orderBy=number&pageSize=250`);
-        const d = await r.json();
-        setsCache[setId] = d.data || [];
-      }
-      currentCards = setsCache[setId];
-
-      // Filtros de raridade
-      const rarities = [...new Set(currentCards.map(c => c.rarity).filter(Boolean))];
-      const rf = document.getElementById('rarity-filters');
-      const allChip = document.createElement('div');
-      allChip.className = 'filter-chip active';
-      allChip.textContent = 'Todas';
-      allChip.onclick = () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        allChip.classList.add('active');
-        renderCards(currentCards);
-      };
-      rf.appendChild(allChip);
-
-      rarities.forEach(rar => {
-        const chip = document.createElement('div');
-        chip.className = 'filter-chip';
-        chip.textContent = rar;
-        chip.onclick = () => {
-          document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          renderCards(currentCards.filter(c => c.rarity === rar));
-        };
-        rf.appendChild(chip);
-      });
-
-      renderCards(currentCards);
-    } catch (e) {
-      document.getElementById('cards-grid').innerHTML =
-        '<div class="empty" style="grid-column:1/-1"><i class="ti ti-wifi-off"></i>Erro ao carregar cartas</div>';
-    }
-  }
-
-  function renderCards(cards) {
-    const total = cards.length;
-    const cnt = cards.filter(c => owned[currentSet.id + '_' + c.id]).length;
-    document.getElementById('cards-stats').textContent = `${cnt}/${total}`;
-
-    document.getElementById('cards-grid').innerHTML = cards.map(c => {
-      const key = currentSet.id + '_' + c.id;
-      const isOwned = !!owned[key];
-      const img = c.images?.small || '';
-      return `<div class="card-item ${isOwned ? 'owned' : ''}" onclick="toggleOwned('${key}', this)">
-        ${img
-          ? `<img src="${img}" alt="${c.name}" loading="lazy">`
-          : `<div style="aspect-ratio:2/3;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;padding:4px;text-align:center;border-radius:6px">${c.name}</div>`
-        }
-        <div class="card-num">${c.number}/${currentSet.printedTotal || currentSet.total}</div>
-        <div class="card-check"><i class="ti ti-check"></i></div>
-      </div>`;
-    }).join('');
-  }
-
-  function toggleOwned(key, el) {
-    if (owned[key]) {
-      delete owned[key];
-      el.classList.remove('owned');
-      showToast('Carta removida');
-    } else {
-      owned[key] = true;
-      el.classList.add('owned');
-      showToast('Carta marcada!');
-    }
-    saveOwned();
-
-    // Atualiza o contador no topo
-    const cnt = currentCards.filter(c => !!owned[currentSet.id + '_' + c.id]).length;
-    document.getElementById('cards-stats').textContent = `${cnt}/${currentCards.length}`;
-  }
-
-  function backToSets() {
-    document.getElementById('view-cards').style.display = 'none';
-    document.getElementById('view-sets').style.display = 'block';
-    renderSets(); // atualiza progresso
-    currentSet = null;
-    currentCards = [];
-  }
-
-  // ─── ABAS ────────────────────────────────────────────────────────────────────
-  function showTab(tab) {
-    ['sets', 'collection', 'binder', 'stats'].forEach(t => {
-      document.getElementById('view-' + t).style.display = 'none';
-      document.getElementById('tab-' + t).classList.remove('active');
-    });
-    document.getElementById('view-cards').style.display = 'none';
-
-    document.getElementById('view-' + tab).style.display = 'block';
-    document.getElementById('tab-' + tab).classList.add('active');
-
-    if (tab === 'collection') renderCollection();
-    if (tab === 'binder') renderBinder();
-    if (tab === 'stats') renderStats();
-  }
-
-  // ─── ABA COLEÇÃO ─────────────────────────────────────────────────────────────
-  async function renderCollection() {
-    const g = document.getElementById('collection-grid');
-    const keys = Object.keys(owned);
-    if (!keys.length) {
-      g.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="ti ti-pokeball"></i>Nenhuma carta marcada ainda</div>';
-      return;
-    }
-    g.innerHTML = '<div class="loading" style="grid-column:1/-1"><i class="ti ti-loader"></i>Carregando...</div>';
-
-    let cards = [];
-    const setIds = [...new Set(keys.map(k => k.split('_')[0]))];
-    for (const sid of setIds) {
-      if (!setsCache[sid]) {
-        try {
-          const r = await fetch(`${API}/cards?q=set.id:${sid}&pageSize=250`);
-          const d = await r.json();
-          setsCache[sid] = d.data || [];
-        } catch (e) {}
-      }
-      (setsCache[sid] || []).forEach(c => {
-        if (owned[sid + '_' + c.id]) cards.push({ ...c, setId: sid });
-      });
-    }
-    allOwnedCards = cards;
-    renderCollectionCards(cards);
-  }
-
-  function filterCollection() {
-    const q = document.getElementById('col-search').value.toLowerCase();
-    renderCollectionCards(allOwnedCards.filter(c => !q || c.name.toLowerCase().includes(q)));
-  }
-
-  function renderCollectionCards(cards) {
-    const g = document.getElementById('collection-grid');
-    if (!cards.length) {
-      g.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="ti ti-search"></i>Nenhuma carta encontrada</div>';
-      return;
-    }
-    g.innerHTML = cards.map(c => {
-      const img = c.images?.small || '';
-      return `<div class="card-item owned">
-        ${img
-          ? `<img src="${img}" alt="${c.name}" loading="lazy">`
-          : `<div style="aspect-ratio:2/3;background:#f0f0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;padding:4px;text-align:center">${c.name}</div>`
-        }
-        <div class="card-num">${c.name}</div>
-        <div class="card-check"><i class="ti ti-check"></i></div>
-      </div>`;
-    }).join('');
-  }
-
-  // ─── ABA BINDER ──────────────────────────────────────────────────────────────
-  function setBinSize(n, btn) {
-    binderSize = n;
-    document.querySelectorAll('.binder-size-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if (binder.length > n) binder = binder.slice(0, n);
-    while (binder.length < n) binder.push(null);
-    saveBinder();
-    renderBinder();
-  }
-
-  function renderBinder() {
-    while (binder.length < binderSize) binder.push(null);
-    const g = document.getElementById('binder-grid');
-    g.innerHTML = binder.slice(0, binderSize).map((card, i) => {
-      if (card) {
-        return `<div class="binder-slot" onclick="openPick(${i})">
-          <img src="${card.img}" alt="${card.name}">
-          <div class="slot-remove" onclick="event.stopPropagation();removeSlot(${i})">
-            <i class="ti ti-x"></i>
-          </div>
-        </div>`;
-      }
-      return `<div class="binder-slot" onclick="openPick(${i})">
-        <i class="ti ti-plus slot-hint"></i>
-      </div>`;
-    }).join('');
-  }
-
-  function removeSlot(i) {
-    binder[i] = null;
-    saveBinder();
-    renderBinder();
-  }
-
-  // ─── MODAL DE SELEÇÃO PARA O BINDER ──────────────────────────────────────────
-  async function openPick(slot) {
-    activeSlot = slot;
-    document.getElementById('pick-modal').classList.add('open');
-    document.getElementById('pick-modal-cards').innerHTML =
-      '<div class="loading" style="grid-column:1/-1"><i class="ti ti-loader"></i>Carregando...</div>';
-
-    // Popula o select de sets no modal
-    const sel = document.getElementById('pick-set-filter');
-    sel.innerHTML = '<option value="">Minhas cartas</option>';
-    allSets.forEach(s => {
-      const o = document.createElement('option');
-      o.value = s.id; o.textContent = s.name;
-      sel.appendChild(o);
-    });
-
-    await loadPickCards('');
-  }
-
-  async function loadPickCards(setId) {
-    pickCards = [];
-    if (setId) {
-      // Carrega todas as cartas do set escolhido
-      if (!setsCache[setId]) {
-        try {
-          const r = await fetch(`${API}/cards?q=set.id:${setId}&pageSize=250`);
-          const d = await r.json();
-          setsCache[setId] = d.data || [];
-        } catch (e) {}
-      }
-      pickCards = (setsCache[setId] || []).map(c => ({ ...c, setId }));
-    } else {
-      // Mostra apenas as cartas que o usuário tem
-      const keys = Object.keys(owned);
-      const sids = [...new Set(keys.map(k => k.split('_')[0]))];
-      for (const sid of sids) {
-        if (!setsCache[sid]) {
-          try {
-            const r = await fetch(`${API}/cards?q=set.id:${sid}&pageSize=250`);
-            const d = await r.json();
-            setsCache[sid] = d.data || [];
-          } catch (e) {}
-        }
-        (setsCache[sid] || []).forEach(c => {
-          if (owned[sid + '_' + c.id]) pickCards.push({ ...c, setId: sid });
-        });
-      }
-      // Se não tiver cartas marcadas, mostra o primeiro set disponível
-      if (!pickCards.length && allSets.length) {
-        const first = allSets[0];
-        if (!setsCache[first.id]) {
-          try {
-            const r = await fetch(`${API}/cards?q=set.id:${first.id}&pageSize=250`);
-            const d = await r.json();
-            setsCache[first.id] = d.data || [];
-          } catch (e) {}
-        }
-        pickCards = (setsCache[first.id] || []).map(c => ({ ...c, setId: first.id }));
-      }
-    }
-    filteredPickCards = pickCards;
-    renderPickCards();
-  }
-
-  async function onPickSetChange() {
-    const setId = document.getElementById('pick-set-filter').value;
-    document.getElementById('pick-modal-cards').innerHTML =
-      '<div class="loading" style="grid-column:1/-1"><i class="ti ti-loader"></i>Carregando...</div>';
-    await loadPickCards(setId);
-  }
-
-  function filterPick() {
-    const q = document.getElementById('pick-search').value.toLowerCase();
-    filteredPickCards = pickCards.filter(c => !q || c.name.toLowerCase().includes(q));
-    renderPickCards();
-  }
-
-  function renderPickCards() {
-    const g = document.getElementById('pick-modal-cards');
-    if (!filteredPickCards.length) {
-      g.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="ti ti-pokeball"></i>Nenhuma carta</div>';
-      return;
-    }
-    g.innerHTML = filteredPickCards.slice(0, 60).map(c => {
-      const img = c.images?.small || '';
-      const data = encodeURIComponent(JSON.stringify({ name: c.name, img }));
-      return `<div class="pick-card" onclick="selectCard('${data}')">
-        ${img
-          ? `<img src="${img}" alt="${c.name}" loading="lazy">`
-          : `<div style="aspect-ratio:2/3;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;padding:4px;text-align:center">${c.name}</div>`
-        }
-        <div class="pick-name">${c.name}</div>
-      </div>`;
-    }).join('');
-  }
-
-  function selectCard(encoded) {
-    const card = JSON.parse(decodeURIComponent(encoded));
-    binder[activeSlot] = card;
-    saveBinder();
-    closePick();
-    renderBinder();
-    showToast('Carta adicionada!');
-  }
-
-  function closePick() {
-    document.getElementById('pick-modal').classList.remove('open');
-    activeSlot = -1;
-  }
-
-  // ─── ABA STATS ───────────────────────────────────────────────────────────────
-  function renderStats() {
-    const keys = Object.keys(owned);
-    const setIds = [...new Set(keys.map(k => k.split('_')[0]))];
-
-    document.getElementById('stat-owned').textContent = keys.length;
-    document.getElementById('stat-sets').textContent = setIds.length;
-
-    let totalSeen = 0;
-    setIds.forEach(sid => {
-      const s = allSets.find(x => x.id === sid);
-      if (s) totalSeen += (s.total || s.printedTotal || 0);
-    });
-
-    document.getElementById('stat-pct').textContent =
-      totalSeen ? Math.round(keys.length / totalSeen * 100) + '%' : '0%';
-    document.getElementById('stat-missing').textContent =
-      Math.max(0, totalSeen - keys.length);
-
-    const pl = document.getElementById('progress-list');
-    if (!setIds.length) {
-      pl.innerHTML = '<div class="empty"><i class="ti ti-pokeball"></i>Marque cartas para ver estatísticas</div>';
-      return;
-    }
-    pl.innerHTML = setIds.map(sid => {
-      const s = allSets.find(x => x.id === sid);
-      if (!s) return '';
-      const total = s.total || s.printedTotal || 0;
-      const cnt = keys.filter(k => k.startsWith(sid + '_')).length;
-      const pct = total ? Math.round(cnt / total * 100) : 0;
-      return `<div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
-          <span style="font-weight:600">${s.name}</span>
-          <span style="color:#888">${cnt}/${total} · ${pct}%</span>
-        </div>
-        <div style="height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden;">
-          <div style="height:100%;width:${pct}%;background:#E24B4A;border-radius:3px;transition:width 0.3s;"></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // ─── INICIALIZAÇÃO ───────────────────────────────────────────────────────────
-  loadSets();
-
-  // Registra o service worker (necessário para instalação como PWA)
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
 </script>
+
 </body>
 </html>
